@@ -1,6 +1,6 @@
 # Package Spec: `artisanpack-ui/ecommerce-configurable-products`
 
-**Status:** Draft — ready to build. Issues are open in the [v1.0 milestone](https://github.com/ArtisanPack-UI/ecommerce-configurable-products/milestones).
+**Status:** Draft — ready to build. Issues #1–#31 are open (v1.0 and Future Release); engine prerequisites ArtisanPack-UI/ecommerce#221–#224; UI build issues ArtisanPack-UI/ecommerce-admin-livewire#144–#148 and ArtisanPack-UI/ecommerce-storefront-livewire#66–#67.
 **Owner:** Jacob Martella
 **Last updated:** 2026-11-17
 **Tracker:** [ArtisanPack-UI/ecommerce#56](https://github.com/ArtisanPack-UI/ecommerce/issues/56)
@@ -62,7 +62,7 @@ When the parent plan and this spec disagree on configurable-product behavior, th
 
 | # | Decision | Outcome | Why |
 |---|---|---|---|
-| D1 | UI location | **Headless only.** This package ships domain logic, REST, and GraphQL. The admin screens and the storefront configurator are issues on `ecommerce-admin-livewire` and `ecommerce-storefront-livewire`, in their **v2.0** (design-system) milestones, built on `livewire-ui-components` 3.0. One design issue in this repo lists every screen and component and blocks those build issues. | Keeps the engine/satellite split (plan §1.1): every UI family consumes the same API. |
+| D1 | UI location | **Headless only.** This package ships domain logic, REST, and GraphQL. The admin screens and the storefront configurator are issues on `ecommerce-admin-livewire` and `ecommerce-storefront-livewire`, in their **v2.0** (design-system) milestones, built on `livewire-ui-components` 3.0. The design issue (#2) lists every screen and component and blocks those build issues. | Keeps the engine/satellite split (plan §1.1): every UI family consumes the same API. |
 | D2 | Configuration model | **Reusable configurator sets with per-product overrides.** A set ("Fine art prints") holds configurators and their choices and prices, and is attached to many products. A product can hide choices, change a choice's price, change defaults, and attach more than one set. | A photo catalog shares the same sizes and finishes across hundreds of products. Editing one set updates them all. |
 | D3 | Configurator types | **Three built-ins:** Size (dimension choices that can also set weight and shipping dimensions), Color (swatches), and Custom (admin-defined choices). Plus a `ConfiguratorType` contract and `ConfiguratorTypeRegistry` so other packages add their own. | Size and Color cover the common cases; Custom covers framing, finish, paper, puzzle pieces, and anything else without code. |
 | D4 | No variants | `configurable` products have **no `product_variants`**. A configuration is a map of configurator key → choice key on `cart_items.options`; prices are computed. | Variants explode combinatorially (8 sizes × 4 papers × 6 frames = 192 rows per photo). |
@@ -420,20 +420,20 @@ Filed on the engine as ArtisanPack-UI/ecommerce#221–#224.
 
 ## 13. UI (built in the sibling satellites, D1)
 
-One design issue in this repo lists every screen and component; build issues live in the UI repos' **v2.0** milestones and are blocked by the design issue and the APIs they need.
+The design issue (#2) lists every screen and component; build issues live in the UI repos' **v2.0** milestones and are blocked by the design issue and the APIs they need.
 
 **ecommerce-admin-livewire** (registers only when this package is installed):
 
-- Configurator sets index page (search, status filter, product counts, duplicate/archive).
-- Configurator set editor page: configurators (reorder, type, display, required, default), per-type choice editors (Size dimensions/weight, Color swatches, Custom choices with images), per-currency prices, rules (reusing the admin's rule builder).
-- Configurable product type panel (`ProductTypePanelRegistry`): attach and order sets, per-choice overrides (hide, default, label, price), price preview.
-- Order detail: configured line summary (from the snapshot) and fulfillment route status, with retry.
-- Fulfillment routing settings screen (rules and registered routes).
+- Configurator sets index page (admin#144; search, status filter, product counts, duplicate/archive).
+- Configurator set editor page (admin#145): configurators (reorder, type, display, required, default), per-type choice editors (Size dimensions/weight, Color swatches, Custom choices with images), per-currency prices, rules (reusing the admin's rule builder).
+- Configurable product type panel (admin#146, `ProductTypePanelRegistry`): attach and order sets, per-choice overrides (hide, default, label, price), price preview.
+- Order detail (admin#147): configured line summary (from the snapshot) and fulfillment route status, with retry.
+- Fulfillment routing settings screen (admin#148; rules and registered routes).
 
 **ecommerce-storefront-livewire:**
 
-- The generic add-to-cart options form gains the E3 schema: swatch and card choices, price deltas, disabled states, conditional fields, and a live price from the quote (E4). This serves configurable products and any other type that uses the schema.
-- Configuration summaries on cart lines, the cart drawer, checkout, order confirmation, and account order pages (E2).
+- (storefront#66) The generic add-to-cart options form gains the E3 schema: swatch and card choices, price deltas, disabled states, conditional fields, and a live price from the quote (E4). This serves configurable products and any other type that uses the schema.
+- (storefront#67) Configuration summaries on cart lines, the cart drawer, checkout, order confirmation, and account order pages (E2).
 
 ## 14. Testing
 
